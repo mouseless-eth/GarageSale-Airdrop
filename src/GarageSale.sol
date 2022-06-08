@@ -16,6 +16,9 @@ contract GarageSale is ERC721A, Ownable {
   // Claim status 
   bool public claimActive = false;
 
+  // Mint price
+  uint256 public immutable MINT_PRICE = 0.01 ether;
+
   // Keeping track of which NFTs have been claimed
   mapping(uint => bool) public isClaimed;
 
@@ -25,7 +28,7 @@ contract GarageSale is ERC721A, Ownable {
   /// @notice Function to claim garage sale
   /// @dev calculations of _ids is done offchain using 0x438b6300 
   /// @param _ids Array of token ids to claim
-  function claim(uint256[] calldata _ids) external {
+  function claim(uint256[] calldata _ids) payable external {
     require(claimActive, "Claim is not active.");
 
     uint256 numTokensClaimed;
@@ -38,6 +41,7 @@ contract GarageSale is ERC721A, Ownable {
         }
     }
 
+    require(numTokensClaimed * MINT_PRICE == msg.value,  "Incorrect ether amount sent");
     _safeMint(msg.sender, numTokensClaimed);
   }
 
@@ -57,5 +61,10 @@ contract GarageSale is ERC721A, Ownable {
   function enableClaim(bool _claimActive) external onlyOwner {
     console.log("Owner", msg.sender);
     claimActive = _claimActive;
+  }
+
+  /// @notice Function to withdraw all ether from this contract
+  function withdraw() external onlyOwner {
+    payable(super.owner()).transfer(address(this).balance);
   }
 }
