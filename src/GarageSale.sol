@@ -10,10 +10,10 @@ contract GarageSale is ERC721A, Ownable {
   // Addredd of HoboNFT
   address public hoboNFT = 0x6e0418050387C6C3d4Cd206d8b89788BBd432525;
 
-  // "Private" Variables
+  // Metadata location
   string private baseURI;
 
-  // Public Variables
+  // Claim status 
   bool public claimActive = false;
 
   // Keeping track of which NFTs have been claimed
